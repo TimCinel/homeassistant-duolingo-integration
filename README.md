@@ -6,6 +6,14 @@
 
 _Component to integrate with a Duolingo account, providing the status of your daily streak._
 
+### Fork Notes
+
+The Duolinguist integration relies on reverse engineering due to there being no published API docs for Duolingo. Adjust your expectations, it's a little bit brittle.
+Because of this, the original author no longer supports the component.
+
+This fork attempts to fix things when Duolingo's API (a moving target) changes.
+
+
 ## Installation
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
