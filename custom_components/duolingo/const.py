@@ -1,18 +1,17 @@
 """Constants for integration_blueprint."""
 # Base component constants
-NAME = "Duolinguist"
+NAME = "Duolingual"
 DOMAIN = "duolingo"
 VERSION = "0.1.0"
 
-ISSUE_URL = "https://github.com/sphanley/duolinguist/issues"
+ISSUE_URL = "https://github.com/TimCinel/duolingual/issues"
 
 # Platforms
 BINARY_SENSOR = "binary_sensor"
 PLATFORMS = [BINARY_SENSOR]
 
 # Configuration and options
-CONF_USERNAME = "username"
-CONF_PASSWORD = "password"
+CONF_USER_ID = "user_id"
 
 
 STARTUP_MESSAGE = f"""

@@ -1,63 +1,27 @@
-"""Sample API Client."""
 import logging
-import asyncio
-import socket
-from typing import Optional
-import duolingo
+from datetime import datetime
 
-TIMEOUT = 10
+import requests
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
-
 class DuolingoApiClient:
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self, user_id: str) -> None:
         """Duolingo API Client."""
-        self._username = username
-        self._password = password
+        self._user_id = user_id
 
     def get_streak_data(self) -> dict:
-        """Get data from the API."""
+        url = f"https://www.duolingo.com/2017-06-30/users/{self._user_id}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
-        return duolingo.Duolingo(self._username, self._password).get_streak_info()
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
 
-    # async def api_wrapper(
-    #     self, method: str, url: str, data: dict = {}, headers: dict = {}
-    # ) -> dict:
-    #     """Get information from the API."""
-    #     try:
-    #         async with async_timeout.timeout(TIMEOUT, loop=asyncio.get_event_loop()):
-    #             if method == "get":
-    #                 response = await self._session.get(url, headers=headers)
-    #                 return await response.json()
+        json = response.json()
+        today = datetime.now().strftime("%Y-%m-%d")
+        self._username = json['username']
 
-    #             elif method == "put":
-    #                 await self._session.put(url, headers=headers, json=data)
-
-    #             elif method == "patch":
-    #                 await self._session.patch(url, headers=headers, json=data)
-
-    #             elif method == "post":
-    #                 await self._session.post(url, headers=headers, json=data)
-
-    #     except asyncio.TimeoutError as exception:
-    #         _LOGGER.error(
-    #             "Timeout error fetching information from %s - %s",
-    #             url,
-    #             exception,
-    #         )
-
-    #     except (KeyError, TypeError) as exception:
-    #         _LOGGER.error(
-    #             "Error parsing information from %s - %s",
-    #             url,
-    #             exception,
-    #         )
-    #     except (aiohttp.ClientError, socket.gaierror) as exception:
-    #         _LOGGER.error(
-    #             "Error fetching information from %s - %s",
-    #             url,
-    #             exception,
-    #         )
-    #     except Exception as exception:  # pylint: disable=broad-except
-    #         _LOGGER.error("Something really wrong happened! - %s", exception)
+        return {
+                "username": json['username'],
+                "streak_extended_today": today == json['streakData']['currentStreak']['lastExtendedDate'],
+                "site_streak": json['streakData']['currentStreak']['length']}

@@ -5,8 +5,7 @@ import logging
 from custom_components.duolingo.api import DuolingoApiClient
 
 from .const import (
-    CONF_USERNAME,
-    CONF_PASSWORD,
+    CONF_USER_ID,
     DOMAIN,
     PLATFORMS,
     STARTUP_MESSAGE,
@@ -28,14 +27,14 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up component from UI"""
+
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
+    user_id = entry.data.get(CONF_USER_ID)
 
-    client = DuolingoApiClient(username, password)
+    client = DuolingoApiClient(user_id)
 
     coordinator = DuolingoDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
@@ -59,6 +58,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class DuolingoDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
+
     def __init__(self, hass: HomeAssistant, client: DuolingoApiClient) -> None:
         """Initialize."""
         self.api = client
@@ -72,11 +72,9 @@ class DuolingoDataUpdateCoordinator(DataUpdateCoordinator):
             data = await self.hass.async_add_executor_job(
                 self.api.get_streak_data,
             )
-            data[CONF_USERNAME] = self.api._username
-
             return data
         except Exception as exception:
-            raise UpdateFailed() from exception
+            raise UpdateFailed(exception) from exception
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):

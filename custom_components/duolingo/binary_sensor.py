@@ -8,12 +8,11 @@ import requests
 import voluptuous as vol
 
 from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorEntity
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
 import homeassistant.helpers.config_validation as cv
 from homeassistant.util import Throttle
 
 from .const import (
-    CONF_USERNAME,
+    CONF_USER_ID,
     DOMAIN,
 )
 
@@ -35,7 +34,7 @@ class DuolinguistBinarySensor(DuolingoEntity, BinarySensorEntity):
     @property
     def name(self):
         """Return the name of the binary_sensor."""
-        return f"{DOMAIN}_{self.coordinator.data.get(CONF_USERNAME)}"
+        return f"{DOMAIN}_{self.coordinator.data.get('username')}"
 
     @property
     def is_on(self):
@@ -49,6 +48,6 @@ class DuolinguistBinarySensor(DuolingoEntity, BinarySensorEntity):
             ATTR_DUO_STREAK_EXTENDED_TODAY: self.coordinator.data.get(
                 "streak_extended_today", False
             ),
-            ATTR_DUO_STREAK_LENGTH: self.coordinator.data.get("site_streak", "0"),
+            ATTR_DUO_STREAK_LENGTH: self.coordinator.data.get("site_streak", 0),
         }
         return attrs
