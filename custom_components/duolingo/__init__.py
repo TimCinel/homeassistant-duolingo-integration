@@ -5,7 +5,7 @@ import logging
 from custom_components.duolingo.api import DuolingoApiClient
 
 from .const import (
-    CONF_USER_ID,
+    CONF_USERNAME,
     DOMAIN,
     PLATFORMS,
     STARTUP_MESSAGE,
@@ -32,9 +32,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    user_id = entry.data.get(CONF_USER_ID)
+    username = entry.data.get(CONF_USERNAME)
+    _LOGGER.debug(f"Setting up integration with username: {username}")
+    _LOGGER.debug(f"Entry data: {entry.data}")
 
-    client = DuolingoApiClient(user_id)
+    client = DuolingoApiClient(username)
 
     coordinator = DuolingoDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
@@ -44,12 +46,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    for platform in PLATFORMS:
-        if entry.options.get(platform, True):
-            coordinator.platforms.append(platform)
-            hass.async_add_job(
-                hass.config_entries.async_forward_entry_setup(entry, platform)
-            )
+    platforms_to_setup = [
+        platform for platform in PLATFORMS
+        if entry.options.get(platform, True)
+    ]
+    coordinator.platforms.extend(platforms_to_setup)
+
+    if platforms_to_setup:
+        await hass.config_entries.async_forward_entry_setups(entry, platforms_to_setup)
 
     entry.add_update_listener(async_reload_entry)
     return True

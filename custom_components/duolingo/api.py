@@ -6,22 +6,36 @@ import requests
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 class DuolingoApiClient:
-    def __init__(self, user_id: str) -> None:
+    def __init__(self, username: str) -> None:
         """Duolingo API Client."""
-        self._user_id = user_id
+        self._username = username
 
     def get_streak_data(self) -> dict:
-        url = f"https://www.duolingo.com/2017-06-30/users/{self._user_id}"
+        url = f"https://www.duolingo.com/2017-06-30/users?username={self._username}"
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        json = response.json()
+        json_data = response.json()
+        users = json_data.get('users', [])
+
+        if not users:
+            raise ValueError(f"No user found with username: {self._username}")
+
+        user_data = users[0]
         today = datetime.now().strftime("%Y-%m-%d")
-        self._username = json['username']
+
+        # Handle case where currentStreak is null (no active streak)
+        current_streak = user_data['streakData'].get('currentStreak')
+        if current_streak:
+            streak_extended_today = today == current_streak.get('endDate', '')
+            site_streak = current_streak.get('length', 0)
+        else:
+            streak_extended_today = False
+            site_streak = 0
 
         return {
-                "username": json['username'],
-                "streak_extended_today": today == json['streakData']['currentStreak']['lastExtendedDate'],
-                "site_streak": json['streakData']['currentStreak']['length']}
+                "username": user_data['username'],
+                "streak_extended_today": streak_extended_today,
+                "site_streak": site_streak}

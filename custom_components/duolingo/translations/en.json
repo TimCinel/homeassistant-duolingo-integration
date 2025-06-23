@@ -3,10 +3,18 @@
         "step": {
             "user": {
                 "data": {
-                    "user_id": "User ID"
+                    "username": "Username"
                 },
-                "description": "Please enter your numeric Duolingo User ID:"
+                "description": "Please enter your Duolingo username:"
             }
+        },
+        "error": {
+            "auth": "Failed to authenticate. Please check your username.",
+            "invalid_auth": "Invalid authentication",
+            "unknown": "Unexpected error"
+        },
+        "abort": {
+            "already_configured": "Account is already configured"
         }
     },
     "title": "Duolingual"

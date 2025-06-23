@@ -3,7 +3,6 @@ from custom_components.duolingo.entity import DuolingoEntity
 from datetime import timedelta
 import logging
 
-import duolingo
 import requests
 import voluptuous as vol
 
@@ -12,7 +11,6 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.util import Throttle
 
 from .const import (
-    CONF_USER_ID,
     DOMAIN,
 )
 
@@ -40,6 +38,11 @@ class DuolinguistBinarySensor(DuolingoEntity, BinarySensorEntity):
     def is_on(self):
         """Return true if the binary sensor is on."""
         return self.coordinator.data.get("streak_extended_today", False)
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend."""
+        return "mdi:school"
 
     @property
     def extra_state_attributes(self):

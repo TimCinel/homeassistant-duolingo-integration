@@ -8,10 +8,11 @@ ISSUE_URL = "https://github.com/TimCinel/duolingual/issues"
 
 # Platforms
 BINARY_SENSOR = "binary_sensor"
-PLATFORMS = [BINARY_SENSOR]
+SENSOR = "sensor"
+PLATFORMS = [BINARY_SENSOR, SENSOR]
 
 # Configuration and options
-CONF_USER_ID = "user_id"
+CONF_USERNAME = "username"
 
 
 STARTUP_MESSAGE = f"""

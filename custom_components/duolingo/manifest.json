@@ -9,7 +9,5 @@
   "codeowners": [
     "@TimCinel"
   ],
-  "requirements": [
-    "requests==2.31.0"
-  ]
+  "requirements": []
 }

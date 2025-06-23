@@ -5,3 +5,4 @@ venv
 .coverage
 .idea
 ha-config/
+CLAUDE.md
