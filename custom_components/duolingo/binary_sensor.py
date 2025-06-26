@@ -1,14 +1,10 @@
 """Support for a Duolingo data sensor."""
-from custom_components.duolingo.entity import DuolingoEntity
-from datetime import timedelta
+
 import logging
 
-import requests
-import voluptuous as vol
+from homeassistant.components.binary_sensor import BinarySensorEntity
 
-from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorEntity
-import homeassistant.helpers.config_validation as cv
-from homeassistant.util import Throttle
+from custom_components.duolingo.entity import DuolingoEntity
 
 from .const import (
     DOMAIN,
@@ -23,11 +19,11 @@ ATTR_DUO_STREAK_EXTENDED_TODAY = "streak_extended_today"
 async def async_setup_entry(hass, entry, async_add_devices):
     """Setup binary_sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_devices([DuolinguistBinarySensor(coordinator, entry)])
+    async_add_devices([DuolingualBinarySensor(coordinator, entry)])
 
 
-class DuolinguistBinarySensor(DuolingoEntity, BinarySensorEntity):
-    """Implementation of the Duolinguist binary sensor."""
+class DuolingualBinarySensor(DuolingoEntity, BinarySensorEntity):
+    """Implementation of the Duolingual binary sensor."""
 
     @property
     def name(self):
@@ -42,7 +38,7 @@ class DuolinguistBinarySensor(DuolingoEntity, BinarySensorEntity):
     @property
     def icon(self):
         """Return the icon to use in the frontend."""
-        return "mdi:school"
+        return "mdi:fire"
 
     @property
     def extra_state_attributes(self):

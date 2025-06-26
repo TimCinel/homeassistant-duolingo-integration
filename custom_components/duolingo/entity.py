@@ -1,4 +1,5 @@
 """DuolingoEntity class"""
+
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 

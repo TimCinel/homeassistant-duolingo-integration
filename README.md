@@ -1,42 +1,48 @@
 # Duolingual
 
 [![GitHub Release][releases-shield]][releases]
-[![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]](LICENSE)
+[![CI][ci-shield]][ci]
 
-_Component to integrate with a Duolingo account, providing the status of your daily streak._
+_Home Assistant integration to track your Duolingo daily streak progress._
+
+## About
+
+This integration creates sensors to monitor your Duolingo streak activity:
+
+- **🔥 Binary Sensor**: Shows if you extended your streak today (on/off)
+- **📅 Streak Sensor**: Displays your current streak count in days
 
 ### Fork Notes
 
-This a fork of [sphanley/Duolinguist](https://github.com/sphanley/Duolinguist).
+This is a fork of [sphanley/Duolinguist](https://github.com/sphanley/Duolinguist), updated to work with current Duolingo APIs and modern Home Assistant versions.
 
-The Duolingual integration relies on reverse engineering due to there being no published API docs for Duolingo.
-Adjust your expectations, it could be a little bit brittle.
-[For this reason, the original author no longer supports the component](https://github.com/sphanley/Duolinguist/issues/1#issuecomment-1672419062).
+⚠️ **Important**: This integration uses reverse-engineered Duolingo APIs since no official API documentation exists. It may break if Duolingo changes their endpoints.
 
-This fork attempts to fix things when Duolingo's API (a moving target) changes.
+## Installation
 
-## Installation (manual)
+### Manual Installation
 
-1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
-2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called `duolingual`.
-4. Download _all_ the files from the `custom_components/duolingual/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Duolingual".
+1. Download the latest release or clone this repository
+2. Copy the `custom_components/duolingo/` folder to your Home Assistant `custom_components/` directory
+3. Restart Home Assistant
+4. Go to **Settings → Devices & Services → Add Integration** and search for "Duolingual"
 
-## Installation (HACS)
+### HACS Installation
 
-**Untested**
+Add this repository as a custom repository in HACS:
 
-Apparently it's possible to [add custom repositories to HACS](https://hacs.xyz/docs/faq/custom_repositories).
-
-Try adding this repository. If it works, let me know and I'll update this section =)
+1. Go to HACS → Integrations → ⋮ → Custom repositories
+2. Add repository URL: `https://github.com/TimCinel/duolingual`
+3. Category: Integration
+4. Install and restart Home Assistant
 
 ## Configuration
 
-This integration utilizes the UI configuration flow, and no YAML configuration is needed!
+1. Go to **Settings → Devices & Services → Add Integration**
+2. Search for "Duolingual"
+3. Enter your Duolingo username (the one visible in your profile URL)
+4. The integration will create two entities for tracking your streak
 
 ## Contributions are welcome!
 
@@ -44,9 +50,8 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 
 ***
 
-[integration_blueprint]: https://github.com/sphanley/duolinguist
-[commits-shield]: https://img.shields.io/github/commit-activity/y/sphanley/duolinguist.svg?style=for-the-badge
-[commits]: https://github.com/sphanley/duolinguist/commits/master
-[license-shield]: https://img.shields.io/github/license/sphanley/duolinguist.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/sphanley/duolinguist.svg?style=for-the-badge
-[releases]: https://github.com/sphanley/duolinguist/releases
+[ci-shield]: https://img.shields.io/github/actions/workflow/status/TimCinel/duolingual/ci.yml?style=for-the-badge
+[ci]: https://github.com/TimCinel/duolingual/actions
+[license-shield]: https://img.shields.io/github/license/TimCinel/duolingual.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/TimCinel/duolingual.svg?style=for-the-badge
+[releases]: https://github.com/TimCinel/duolingual/releases

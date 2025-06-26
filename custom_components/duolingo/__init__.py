@@ -1,7 +1,14 @@
-"""The Duolinguist integration."""
+"""The Duolingual integration."""
+
 import asyncio
-from datetime import timedelta
 import logging
+from datetime import timedelta
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+
 from custom_components.duolingo.api import DuolingoApiClient
 
 from .const import (
@@ -10,11 +17,6 @@ from .const import (
     PLATFORMS,
     STARTUP_MESSAGE,
 )
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
 
 SCAN_INTERVAL = timedelta(seconds=900)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -27,7 +29,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up component from UI"""
-
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
@@ -47,8 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     platforms_to_setup = [
-        platform for platform in PLATFORMS
-        if entry.options.get(platform, True)
+        platform for platform in PLATFORMS if entry.options.get(platform, True)
     ]
     coordinator.platforms.extend(platforms_to_setup)
 
@@ -61,7 +61,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 class DuolingoDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
-
 
     def __init__(self, hass: HomeAssistant, client: DuolingoApiClient) -> None:
         """Initialize."""

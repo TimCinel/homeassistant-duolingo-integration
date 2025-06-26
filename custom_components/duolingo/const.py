@@ -1,4 +1,5 @@
-"""Constants for integration_blueprint."""
+"""Constants for Duolingual."""
+
 # Base component constants
 NAME = "Duolingual"
 DOMAIN = "duolingo"

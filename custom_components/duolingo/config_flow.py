@@ -1,7 +1,7 @@
-"""Adds config flow for Duolinguist."""
-from homeassistant import config_entries
-from homeassistant.core import callback
+"""Adds config flow for Duolingual."""
+
 import voluptuous as vol
+from homeassistant import config_entries
 
 from .api import DuolingoApiClient
 from .const import (
@@ -10,8 +10,8 @@ from .const import (
 )
 
 
-class DuolinguistFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Duolinguist."""
+class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for Duolingual."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
@@ -33,11 +33,8 @@ class DuolinguistFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 if valid:
                     # Store username in config entry
                     config_data = {CONF_USERNAME: username}
-                    return self.async_create_entry(
-                        title=username, data=config_data
-                    )
-                else:
-                    self._errors["base"] = "auth"
+                    return self.async_create_entry(title=username, data=config_data)
+                self._errors["base"] = "auth"
             except Exception:
                 self._errors["base"] = "auth"
 

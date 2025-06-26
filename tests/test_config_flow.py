@@ -1,72 +1,89 @@
 """Test Duolingo config flow."""
+
 from unittest.mock import patch
 
-from homeassistant import config_entries, data_entry_flow
-import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
 
-from custom_components.duolingo.const import BINARY_SENSOR, DOMAIN, PLATFORMS
-
-from .const import MOCK_CONFIG
+from custom_components.duolingo.const import CONF_USERNAME, DOMAIN
 
 
-# This fixture bypasses the actual setup of the integration
-# since we only want to test the config flow. We test the
-# actual functionality of the integration in other test modules.
-@pytest.fixture(autouse=True)
-def bypass_setup_fixture():
-    """Prevent setup."""
-    with patch("custom_components.duolingo.async_setup", return_value=True,), patch(
-        "custom_components.duolingo.async_setup_entry",
-        return_value=True,
-    ):
-        yield
+async def test_form_user(hass: HomeAssistant):
+    """Test user config flow."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    assert result["type"] == FlowResultType.FORM
+    assert result["errors"] == {}
+
+    with patch(
+        "custom_components.duolingo.config_flow.DuolingoApiClient",
+    ) as mock_client:
+        mock_client.return_value.get_streak_data.return_value = {
+            "username": "testuser",
+            "streak_extended_today": True,
+            "site_streak": 42,
+        }
+
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_USERNAME: "testuser",
+            },
+        )
+        await hass.async_block_till_done()
+
+    assert result2["type"] == FlowResultType.CREATE_ENTRY
+    assert result2["title"] == "testuser"
+    assert result2["data"] == {
+        CONF_USERNAME: "testuser",
+    }
 
 
-# Here we simulate a successful config flow from the backend.
-# Note that we use the `bypass_get_data` fixture here because
-# we want the config flow validation to succeed during the test.
-async def test_successful_config_flow(hass, bypass_get_data):
-    """Test a successful config flow."""
-    # Initialize a config flow
+async def test_form_invalid_auth(hass: HomeAssistant):
+    """Test invalid authentication."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
 
-    # Check that the config flow shows the user form as the first step
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "user"
+    with patch(
+        "custom_components.duolingo.config_flow.DuolingoApiClient",
+    ) as mock_client:
+        mock_client.return_value.get_streak_data.side_effect = ValueError(
+            "No user found"
+        )
 
-    # If a user were to enter `test_username` for username and `test_password`
-    # for password, it would result in this function call
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], user_input=MOCK_CONFIG
-    )
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_USERNAME: "invaliduser",
+            },
+        )
 
-    # Check that the config flow is complete and a new entry is created with
-    # the input data
-    assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
-    assert result["title"] == "test_username"
-    assert result["data"] == MOCK_CONFIG
-    assert result["result"]
+    assert result2["type"] == FlowResultType.FORM
+    assert result2["errors"]["base"] == "auth"
 
 
-# In this case, we want to simulate a failure during the config flow.
-# We use the `error_on_get_data` mock instead of `bypass_get_data`
-# (note the function parameters) to raise an Exception during
-# validation of the input config.
-async def test_failed_config_flow(hass, error_on_get_data):
-    """Test a failed config flow due to credential validation failure."""
+async def test_form_connection_error(hass: HomeAssistant):
+    """Test connection error."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "user"
+    with patch(
+        "custom_components.duolingo.config_flow.DuolingoApiClient",
+    ) as mock_client:
+        mock_client.return_value.get_streak_data.side_effect = Exception(
+            "Connection error"
+        )
 
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], user_input=MOCK_CONFIG
-    )
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_USERNAME: "testuser",
+            },
+        )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["errors"] == {"base": "auth"}
+    assert result2["type"] == FlowResultType.FORM
+    assert result2["errors"]["base"] == "auth"

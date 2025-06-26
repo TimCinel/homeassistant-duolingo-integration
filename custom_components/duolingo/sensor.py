@@ -1,9 +1,11 @@
 """Support for Duolingo streak sensors."""
-from custom_components.duolingo.entity import DuolingoEntity
+
 import logging
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import ATTR_ATTRIBUTION
+
+from custom_components.duolingo.entity import DuolingoEntity
 
 from .const import (
     DOMAIN,
@@ -46,7 +48,7 @@ class DuolingoStreakSensor(DuolingoEntity, SensorEntity):
     @property
     def icon(self):
         """Return the icon to use in the frontend."""
-        return "mdi:fire"
+        return "mdi:calendar"
 
     @property
     def extra_state_attributes(self):
@@ -54,6 +56,8 @@ class DuolingoStreakSensor(DuolingoEntity, SensorEntity):
         attrs = {
             ATTR_ATTRIBUTION: ATTRIBUTION,
             "username": self.coordinator.data.get("username"),
-            "streak_extended_today": self.coordinator.data.get("streak_extended_today", False),
+            "streak_extended_today": self.coordinator.data.get(
+                "streak_extended_today", False
+            ),
         }
         return attrs
