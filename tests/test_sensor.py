@@ -5,6 +5,9 @@ from unittest.mock import MagicMock
 from custom_components.duolingo.binary_sensor import DuolingualBinarySensor
 from custom_components.duolingo.sensor import DuolingoStreakSensor
 
+# Test constants
+TEST_STREAK_COUNT = 42
+
 
 def test_binary_sensor_is_on():
     """Test binary sensor is_on when streak extended today."""
@@ -12,7 +15,7 @@ def test_binary_sensor_is_on():
     coordinator.data = {
         "username": "testuser",
         "streak_extended_today": True,
-        "site_streak": 42,
+        "site_streak": TEST_STREAK_COUNT,
     }
     entry = MagicMock()
 
@@ -29,7 +32,7 @@ def test_binary_sensor_is_off():
     coordinator.data = {
         "username": "testuser",
         "streak_extended_today": False,
-        "site_streak": 42,
+        "site_streak": TEST_STREAK_COUNT,
     }
     entry = MagicMock()
 
@@ -44,7 +47,7 @@ def test_binary_sensor_attributes():
     coordinator.data = {
         "username": "testuser",
         "streak_extended_today": True,
-        "site_streak": 42,
+        "site_streak": TEST_STREAK_COUNT,
     }
     entry = MagicMock()
 
@@ -52,7 +55,7 @@ def test_binary_sensor_attributes():
     attrs = sensor.extra_state_attributes
 
     assert attrs["streak_extended_today"] is True
-    assert attrs["streak_length"] == 42
+    assert attrs["streak_length"] == TEST_STREAK_COUNT
 
 
 def test_streak_sensor_native_value():
@@ -61,13 +64,13 @@ def test_streak_sensor_native_value():
     coordinator.data = {
         "username": "testuser",
         "streak_extended_today": True,
-        "site_streak": 42,
+        "site_streak": TEST_STREAK_COUNT,
     }
     entry = MagicMock()
 
     sensor = DuolingoStreakSensor(coordinator, entry)
 
-    assert sensor.native_value == 42
+    assert sensor.native_value == TEST_STREAK_COUNT
     assert sensor.name == "duolingo_testuser_streak"
     assert sensor.unique_id == "duolingo_testuser_streak"
     assert sensor.native_unit_of_measurement == "days"
@@ -95,7 +98,7 @@ def test_streak_sensor_attributes():
     coordinator.data = {
         "username": "testuser",
         "streak_extended_today": True,
-        "site_streak": 42,
+        "site_streak": TEST_STREAK_COUNT,
     }
     entry = MagicMock()
 

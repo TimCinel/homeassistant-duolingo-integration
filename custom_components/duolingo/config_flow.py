@@ -1,7 +1,10 @@
 """Adds config flow for Duolingual."""
 
+from typing import Any
+
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.data_entry_flow import FlowResult
 
 from .api import DuolingoApiClient
 from .const import (
@@ -20,7 +23,9 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._errors = {}
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
@@ -35,7 +40,7 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     config_data = {CONF_USERNAME: username}
                     return self.async_create_entry(title=username, data=config_data)
                 self._errors["base"] = "auth"
-            except Exception:
+            except Exception:  # noqa: BLE001
                 self._errors["base"] = "auth"
 
             return await self._show_config_form(user_input)
@@ -46,7 +51,7 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return await self._show_config_form(user_input)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, user_input: dict[str, Any]) -> FlowResult:
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -58,7 +63,7 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-    async def _test_credentials(self, username):
+    async def _test_credentials(self, username: str) -> bool:
         """Return true if credentials is valid."""
         try:
             client = DuolingoApiClient(username)
@@ -66,7 +71,8 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 client.get_streak_data,
             )
 
-            return True
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # noqa: BLE001, S110
             pass
+        else:
+            return True
         return False

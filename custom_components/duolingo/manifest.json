@@ -1,13 +1,13 @@
 {
   "domain": "duolingo",
   "name": "Duolingual",
-  "documentation": "https://github.com/TimCinel/duolingual",
-  "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/TimCinel/duolingual/issues",
-  "version": "0.0.1",
-  "config_flow": true,
   "codeowners": [
     "@TimCinel"
   ],
-  "requirements": []
+  "config_flow": true,
+  "documentation": "https://github.com/TimCinel/duolingual",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/TimCinel/duolingual/issues",
+  "requirements": [],
+  "version": "0.0.1"
 }

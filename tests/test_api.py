@@ -23,14 +23,16 @@ def test_api_get_streak_data_success():
     }
     mock_response.raise_for_status = MagicMock()
 
-    with patch(
-        "custom_components.duolingo.api.requests.get", return_value=mock_response
+    with (
+        patch(
+            "custom_components.duolingo.api.requests.get", return_value=mock_response
+        ),
+        patch("custom_components.duolingo.api.datetime") as mock_datetime,
     ):
-        with patch("custom_components.duolingo.api.datetime") as mock_datetime:
-            mock_datetime.now.return_value.strftime.return_value = "2023-12-01"
+        mock_datetime.now.return_value.strftime.return_value = "2023-12-01"
 
-            client = DuolingoApiClient("testuser")
-            result = client.get_streak_data()
+        client = DuolingoApiClient("testuser")
+        result = client.get_streak_data()
 
     assert result == {
         "username": "testuser",

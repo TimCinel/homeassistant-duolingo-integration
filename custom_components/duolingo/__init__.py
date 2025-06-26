@@ -3,7 +3,9 @@
 import asyncio
 import logging
 from datetime import timedelta
+from typing import Any
 
+import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -21,21 +23,24 @@ from .const import (
 SCAN_INTERVAL = timedelta(seconds=900)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# Configuration schema - this integration only supports config entries
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-async def async_setup(hass: HomeAssistant, config: dict):
-    """Setting up this integration using YAML is not supported."""
+
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:  # noqa: ARG001
+    """Set up this integration using YAML is not supported."""
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up component from UI"""
+    """Set up component from UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
     username = entry.data.get(CONF_USERNAME)
-    _LOGGER.debug(f"Setting up integration with username: {username}")
-    _LOGGER.debug(f"Entry data: {entry.data}")
+    _LOGGER.debug("Setting up integration with username: %s", username)
+    _LOGGER.debug("Entry data: %s", entry.data)
 
     client = DuolingoApiClient(username)
 
@@ -69,18 +74,17 @@ class DuolingoDataUpdateCoordinator(DataUpdateCoordinator):
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
 
-    async def _async_update_data(self):
+    async def _async_update_data(self) -> dict[str, Any]:
         """Update data via library."""
         try:
-            data = await self.hass.async_add_executor_job(
+            return await self.hass.async_add_executor_job(
                 self.api.get_streak_data,
             )
-            return data
         except Exception as exception:
             raise UpdateFailed(exception) from exception
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     unloaded = all(
