@@ -53,4 +53,5 @@ class DuolingoApiClient:
             "username": user_data["username"],
             "streak_extended_today": streak_extended_today,
             "site_streak": site_streak,
+            "total_xp": user_data.get("totalXp", 0),
         }

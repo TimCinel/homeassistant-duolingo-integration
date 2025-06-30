@@ -18,6 +18,7 @@ def test_api_get_streak_data_success():
                 "streakData": {
                     "currentStreak": {"endDate": "2023-12-01", "length": 42}
                 },
+                "totalXp": 12500,
             }
         ]
     }
@@ -38,6 +39,7 @@ def test_api_get_streak_data_success():
         "username": "testuser",
         "streak_extended_today": True,
         "site_streak": 42,
+        "total_xp": 12500,
     }
 
 
@@ -45,7 +47,13 @@ def test_api_get_streak_data_no_streak():
     """Test API call with no current streak."""
     mock_response = MagicMock()
     mock_response.json.return_value = {
-        "users": [{"username": "testuser", "streakData": {"currentStreak": None}}]
+        "users": [
+            {
+                "username": "testuser",
+                "streakData": {"currentStreak": None},
+                "totalXp": 0,
+            }
+        ]
     }
     mock_response.raise_for_status = MagicMock()
 
@@ -59,6 +67,7 @@ def test_api_get_streak_data_no_streak():
         "username": "testuser",
         "streak_extended_today": False,
         "site_streak": 0,
+        "total_xp": 0,
     }
 
 

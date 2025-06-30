@@ -12,6 +12,7 @@ This integration creates sensors to monitor your Duolingo streak activity:
 
 - **🔥 Binary Sensor**: Shows if you extended your streak today (on/off)
 - **📅 Streak Sensor**: Displays your current streak count in days
+- **⭐ XP Sensor**: Shows your total XP across all courses
 
 ### Fork Notes
 
