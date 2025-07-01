@@ -1,8 +1,9 @@
 """Duolingo API client."""
 
 import logging
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -12,9 +13,10 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 class DuolingoApiClient:
     """Client for communicating with Duolingo API."""
 
-    def __init__(self, username: str) -> None:
+    def __init__(self, username: str, timezone: str) -> None:
         """Duolingo API Client."""
         self._username = username
+        self._timezone = timezone
 
     def get_streak_data(self) -> dict[str, Any]:
         """Get streak data for the configured user."""
@@ -38,7 +40,10 @@ class DuolingoApiClient:
             raise ValueError(msg)
 
         user_data = users[0]
-        today = datetime.now(tz=UTC).strftime("%Y-%m-%d")
+        # Use Home Assistant's configured timezone
+        # Duolingo API returns dates in user's timezone
+        tz = ZoneInfo(self._timezone)
+        today = datetime.now(tz).strftime("%Y-%m-%d")
 
         # Handle case where currentStreak is null (no active streak)
         current_streak = user_data["streakData"].get("currentStreak")

@@ -66,7 +66,7 @@ class DuolingualFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _test_credentials(self, username: str) -> bool:
         """Return true if credentials is valid."""
         try:
-            client = DuolingoApiClient(username)
+            client = DuolingoApiClient(username, self.hass.config.time_zone)
             await self.hass.async_add_executor_job(
                 client.get_streak_data,
             )

@@ -32,7 +32,7 @@ def test_api_get_streak_data_success():
     ):
         mock_datetime.now.return_value.strftime.return_value = "2023-12-01"
 
-        client = DuolingoApiClient("testuser")
+        client = DuolingoApiClient("testuser", "UTC")
         result = client.get_streak_data()
 
     assert result == {
@@ -60,7 +60,7 @@ def test_api_get_streak_data_no_streak():
     with patch(
         "custom_components.duolingo.api.requests.get", return_value=mock_response
     ):
-        client = DuolingoApiClient("testuser")
+        client = DuolingoApiClient("testuser", "UTC")
         result = client.get_streak_data()
 
     assert result == {
@@ -80,7 +80,7 @@ def test_api_get_streak_data_no_user():
     with patch(
         "custom_components.duolingo.api.requests.get", return_value=mock_response
     ):
-        client = DuolingoApiClient("invaliduser")
+        client = DuolingoApiClient("invaliduser", "UTC")
 
         with pytest.raises(
             ValueError, match="No user found with username: invaliduser"
@@ -94,7 +94,7 @@ def test_api_request_error():
         "custom_components.duolingo.api.requests.get",
         side_effect=requests.RequestException("Connection error"),
     ):
-        client = DuolingoApiClient("testuser")
+        client = DuolingoApiClient("testuser", "UTC")
 
         with pytest.raises(requests.RequestException):
             client.get_streak_data()

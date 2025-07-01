@@ -42,7 +42,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _LOGGER.debug("Setting up integration with username: %s", username)
     _LOGGER.debug("Entry data: %s", entry.data)
 
-    client = DuolingoApiClient(username)
+    client = DuolingoApiClient(username, hass.config.time_zone)
 
     coordinator = DuolingoDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
