@@ -1,4 +1,4 @@
-# Duolingual
+# Duolingual - A Home Assistanat integration for Duolingo
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
@@ -8,7 +8,14 @@ _Home Assistant integration to track your Duolingo daily streak progress._
 
 ## About
 
-This integration creates sensors to monitor your Duolingo streak activity:
+
+This integration is easy to set up (just enter your username) and it creates sensors to monitor your Duolingo streak activity:
+
+<img width="416" alt="image" src="https://github.com/user-attachments/assets/28036aaa-67e7-419b-980e-5926433aad07" />
+
+<img width="343" alt="image" src="https://github.com/user-attachments/assets/66d0518e-802a-4a27-8397-f1fdaa551a06" />
+
+
 
 - **🔥 Binary Sensor**: Shows if you extended your streak today (on/off)
 - **📅 Streak Sensor**: Displays your current streak count in days
