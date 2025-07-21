@@ -1,4 +1,4 @@
-# Duolingual - A Home Assistanat integration for Duolingo
+# Duolingual - A Home Assistant integration for Duolingo
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
